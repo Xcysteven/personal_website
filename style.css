@@ -6,6 +6,8 @@ body {
   max-width: 100ch;
   margin: 0 auto;
   padding: 1.5rem;
+
+  background-color: #f4f4f4;
 }
 
 .download-link {
@@ -19,6 +21,8 @@ nav {
     display: flex; 
     border-bottom: 1px solid #ccc; 
     margin-bottom: 2rem; 
+
+    gap: 0.5rem;
 }
 
 nav a {
@@ -27,14 +31,18 @@ nav a {
     
     padding: 0.75rem;
     text-decoration: none; 
-    color: #333; 
+    color: #625c5c; 
+
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
 nav a:hover {
-    background-color: #f4f4f4; 
+    background-color: #b5aeae; 
 }
 
 nav a.current {
     font-weight: bold;
-    border-bottom: 3px solid #005a9c; 
+    background-color: #005a9c;
+    color: white;
 }
