@@ -3,4 +3,38 @@ body {
 	   and use the OS’s UI font as the website font
 	 */
   font: 100%/1.5 system-ui;
+  max-width: 100ch;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.download-link {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+
+nav {
+    display: flex; 
+    border-bottom: 1px solid #ccc; 
+    margin-bottom: 2rem; 
+}
+
+nav a {
+    flex: 1; 
+    text-align: center; 
+    
+    padding: 0.75rem;
+    text-decoration: none; 
+    color: #333; 
+}
+
+nav a:hover {
+    background-color: #f4f4f4; 
+}
+
+nav a.current {
+    font-weight: bold;
+    border-bottom: 3px solid #005a9c; 
 }
