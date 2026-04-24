@@ -1,47 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My first Personal Website!</title>
+    <title>Contact | Steven Xu</title>
     <link rel="stylesheet" href="../style.css">
+    <script type="module" src="../global.js"></script>
 </head>
 <body>
-    <nav>
-        <a href="../index.html">Home</a>
-
-        <a href="../projects/index.html">Projects</a>
-
-        <a href="/">Contact</a>
-
-        <a href="https://github.com/Xcysteven" target="_blank">My GitHub</a>
-
-        <a href="../resume/index.html">Resume</a>
-    </nav>
     <h1>My Contacts</h1>
-    <p>
-        My email: chx023@ucsd.edu
-    </p>
+    <p>My email: chx023@ucsd.edu</p>
+
     <form action="mailto:chx023@ucsd.edu" method="POST" enctype="text/plain">
-    
-    <label>
-        Your Email: 
-        <input type="email" name="email">
-    </label>
-    <br> <label>
-        Subject:
-        <input type="text" name="subject">
-    </label>
-    <br>
+        <label>
+            Your Email: 
+            <input type="email" name="email">
+        </label>
+        
+        <label>
+            Subject:
+            <input type="text" name="subject">
+        </label>
 
-    <label>
-        Message:
-        <textarea name="body"></textarea>
-    </label>
-    <br>
+        <label>
+            Message:
+            <textarea name="body"></textarea>
+        </label>
 
-    <button type="submit">Send Email</button>
-
-</form>
+        <button type="submit">Send Email</button>
+    </form>
 </body>
 </html>

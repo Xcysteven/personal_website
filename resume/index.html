@@ -1,91 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My first Personal Website!</title>
+    <title>Resume | Steven Xu</title>
     <link rel="stylesheet" href="../style.css">
+    <script type="module" src="../global.js"></script>
 </head>
-<section>
-    <nav>
-        <a href="../index.html">Home</a>
-
-        <a href="../projects/index.html">Projects</a>
-
-        <a href="../contacts/index.html">Contact</a>
-
-        <a href="https://github.com/Xcysteven" target="_blank">My GitHub</a>
-
-        <a href="resume/index.html">Resume</a>
-    </nav>
+<body>
     <h1>STEVEN XU</h1>
     <a href="Resume.docx-3.pdf" download class="download-link">Download my resume as PDF</a>
-    <h2>EDUCATION</h2>
+
+    <section>
+        <h2>EDUCATION</h2>
+        <article>
+            <h3>UCSD</h3>
+            <h4>BS in Data Science and Economics</h4>
+            <ul>
+                <li>GPA: 3.89/4.0</li>
+                <li>Relevant course work: The Practice and Application of Data Science</li>
+            </ul>
+        </article>
+    </section>
+
+    <section>
+        <h2>PROFESSIONAL EXPERIENCES</h2>
+        <article>
+            <h3>Research/Outreach Internship</h3>
+            <h4>PolyLabs Inc</h4>
+            <p>Remote | <time datetime="2025-06">Jun 2025</time> - <time datetime="2025-09">September 2025</time></p>
+            <ul>
+                <li>Assist in writing an AI pipeline for generating social media posts and conducted A/B testing.</li>
+                <li>Conducted outreach strategy and research on student AI usage.</li>
+                <li>Assisted in designing and debugging product websites.</li>
+            </ul>
+        </article>
+
+        <article>
+            <h3>Director of Quantitative Analysis</h3>
+            <h4>Sustainable Investment Group</h4>
+            <p>San Diego, California | <time datetime="2024-09">Sep 2024</time> - Present</p>
+            <ul>
+                <li>Created a stock network between industries to predict trends using statistical variables.</li>
+                <li>Designed a portfolio simulator using PCA and t-SNE that outperformed the S&P 500.</li>
+                <li>Used Vector Auto-Regression at UCLA DataFest to forecast future centroids.</li>
+            </ul>
+        </article>
+    </section>
+
+    <hr>
     
-    <article>
-        <h3>UCSD</h3>
-        <h4>BS in Data Science and Economics</h4>
-        <ul>
-            <li>GPA: 3.89/4.0</li>
-            <li>Relevant course work: The Practice and Application of Data Science</li>
-        </ul>
-    </article>
-    <h2>PROFESSIONAL EXPERIENCES</h2>
-
-    <article>
-        <h3>Research/Outreach Internship</h3>
-        <h4>PolyLabs Inc</h4>
-        <p>Remote</p>
-        <p>
-            <time datetime="2025-06">Jun 2025</time> - <time datetime="2025-09">September 2025</time>
-        </p>
-        <ul>
-            <li>Assist in writing an AI pipeline for generating social media posts. Conducted an A/B testing comparing its effectiveness to regular posting strategies.</li>
-            <li>Worked on multiple projects and conducted research on how AI could be used among students. Designed and conducted outreach strategy and wrote general email template. Currently working with schools from England.</li>
-            <li>Assist to design and debug product websites. Assist in managing product release date and timeline.</li>
-            <li>Drafted content calendar throughout the launching product period. Developed multiple KPIs to evaluate our effectiveness for our marketing campaign.</li>
-        </ul>
-    </article>
-
-    <article>
-        <h3>Director of Quantitative Analysis</h3>
-        <h4>Sustainable Investment Group</h4>
-        <p>San Diego, California</p>
-        <p>
-            <time datetime="2024-09">Sep 2024</time> - Present
-        </p>
-        <ul>
-            <li>Worked on a project that creates a stock network between stocks between industries. Developing an algorithm to predict a stock trend using relevant stocks by statistical variables. Created a website to showcase our results.</li>
-            <li>Worked on a project using CAPM residual return from stocks and clustered them through PCA and t-SNE. Designed a portfolio simulator by using a rolling window of seven days. Our designed portfolio outperformed S&P 500 in the past 2 years by 600%</li>
-            <li>Participated in UCLA DataFest. I used Vector Auto-Regression to forecast future centroid in a neighborhood given leasing data and visualized our result through MatplotLib and Plotly.</li>
-        </ul>
-    </article>
-
-    <article>
-        <h3>Curriculum Officer/Member</h3>
-        <h4>DECA</h4>
-        <p>San Jose, California</p>
-        <p>
-            <time datetime="2021-06">Jun 2021</time> – <time datetime="2024-05">May 2024</time>
-        </p>
-        <ul>
-            <li>Managed weekly workshops, introduced new members to events, gave lectures on basic business knowledges.</li>
-            <li>Competitive achievements include: #5 in Principles of Finance (‘22 CA), #4 in Virtual Business Challenge: Accounting (‘22 western region); qualify for and attend International Career Development Conference.</li>
-        </ul>
-    </article>
-</section>
-
-<hr> <section>
-    <h2>ADDITIONAL INFORMATION</h2>
-    
-    <p>
-        <strong>Skills:</strong> Fluent in Mandarin and English
-    </p>
-    <p>
-        <strong>Computer:</strong> Proficient in Excel, PowerPoint, Java, Python, R
-    </p>
-    <p>
-        <strong>Interests:</strong> Hiking, Cooking, Poker, Reading
-    </p>
-</section>
+    <section>
+        <h2>ADDITIONAL INFORMATION</h2>
+        <p><strong>Skills:</strong> Fluent in Mandarin and English</p>
+        <p><strong>Computer:</strong> Proficient in Excel, PowerPoint, Java, Python, R</p>
+        <p><strong>Interests:</strong> Hiking, Cooking, Poker, Reading</p>
+    </section>
+</body>
 </html>
