@@ -1,0 +1,50 @@
+[
+  {
+    "title": "Large Scale Network between Stock Movements",
+    "year": "2024",
+    "image": "https://dsc106.com/labs/lab02/images/empty.svg",
+    "description": "Discovering patterns and comovements, how do they relate to each other. Developed an algorithm to trade based on relative stocks."
+  },
+  {
+    "title": "Quantitative Portfolio Simulator",
+    "year": "2023",
+    "image": "https://dsc106.com/labs/lab02/images/empty.svg",
+    "description": "Clustered stocks through PCA and t-SNE. Designed a portfolio simulator using a rolling window of seven days that outperformed the S&P 500."
+  },
+  {
+    "title": "UCLA DataFest: Gentrification Forecast",
+    "year": "2023",
+    "image": "https://dsc106.com/labs/lab02/images/empty.svg",
+    "description": "Used Vector Auto-Regression to forecast future centroids in a neighborhood given leasing data, visualizing results through Matplotlib and Plotly."
+  },
+  {
+    "title": "LSTM Stock Price Predictor",
+    "year": "2025",
+    "image": "https://dsc106.com/labs/lab02/images/empty.svg",
+    "description": "Trained Long Short-Term Memory (LSTM) and RNN models to predict stock price movements and detect lead-lag dependencies in algorithmic trading."
+  },
+  {
+    "title": "LLM Task Manager & Gantt Chart Generator",
+    "year": "2025",
+    "image": "https://dsc106.com/labs/lab02/images/empty.svg",
+    "description": "Built a custom Large Language Model tool to automate personal organization and dynamically generate visual Gantt charts for complex workflows."
+  },
+  {
+    "title": "Semantic Knowledge Graph Pipeline",
+    "year": "2026",
+    "image": "https://dsc106.com/labs/lab02/images/empty.svg",
+    "description": "Architected a pipeline transforming unstructured document text into semantic knowledge graphs utilizing LLMs and Neo4j."
+  },
+  {
+    "title": "Gradescope Grade Calculator",
+    "year": "2026",
+    "image": "https://dsc106.com/labs/lab02/images/empty.svg",
+    "description": "Developing an automated tool to scrape and calculate current academic standing and hypothetical scores directly from Gradescope."
+  },
+  {
+    "title": "PolyLabs AI Social Media Pipeline",
+    "year": "2025",
+    "image": "https://dsc106.com/labs/lab02/images/empty.svg",
+    "description": "Assisted in writing an AI pipeline for generating targeted social media posts and conducted comprehensive A/B testing on marketing effectiveness."
+  }
+]

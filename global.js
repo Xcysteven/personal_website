@@ -69,3 +69,37 @@ select.addEventListener('input', (event) => setColorScheme(event.target.value));
 if ('colorScheme' in localStorage) {
     setColorScheme(localStorage.colorScheme);
 }
+
+// Step 1.2: Fetch data from a JSON file
+export async function fetchJSON(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch projects: ${response.statusText}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching or parsing JSON data:', error);
+    }
+}
+
+// Step 1.4: Render projects to the screen
+export function renderProjects(projects, containerElement, headingLevel = 'h2') {
+    containerElement.innerHTML = ''; // Clear existing content
+
+    for (let project of projects) {
+        const article = document.createElement('article');
+        article.innerHTML = `
+            <${headingLevel}>${project.title}</${headingLevel}>
+            <img src="${project.image}" alt="${project.title}">
+            <p>${project.description}</p>
+            <p class="project-year">c. ${project.year}</p>
+        `;
+        containerElement.appendChild(article);
+    }
+}
+
+// Step 3.2: Fetch live GitHub Data
+export async function fetchGitHubData(username) {
+    return fetchJSON(`https://api.github.com/users/${username}`);
+}
