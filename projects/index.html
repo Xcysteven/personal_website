@@ -5,11 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects | Steven Xu</title>
     <link rel="stylesheet" href="../style.css">
+    
     <script type="module" src="../global.js"></script>
 </head>
 <body>
     <h1 class="projects-title">Projects</h1>
     
+    <input class="searchBar" type="search" aria-label="Search projects" placeholder="🔍 Search projects…" />
+
+    <div class="container">
+        <svg id="projects-pie-plot" viewBox="-50 -50 100 100"></svg>
+        
+        <ul class="legend"></ul>
+    </div>
+
     <div class="projects"></div> 
 
     <script src="projects.js" type="module" defer></script>
