@@ -139,3 +139,97 @@ path {
 .selected:is(path) {
     fill: var(--color);
 }
+
+/* === Lab 6: Meta Page Styling === */
+
+#scatterplot-container {
+    position: relative; /* Essential for tooltip positioning */
+    margin-top: 2rem;
+}
+
+#scatterplot {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+/* Make axis text adapt to light/dark mode */
+#scatterplot text {
+    fill: canvastext;
+}
+#scatterplot path, #scatterplot line {
+    stroke: canvastext;
+}
+
+/* --- Summary Stats Dashboard --- */
+#stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background-color: color-mix(in oklch, canvas, canvastext 5%);
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid oklch(50% 10% 200 / 20%);
+}
+
+.stat-card strong {
+    display: block;
+    font-size: 2rem;
+    color: var(--color-accent, #005a9c);
+    margin-bottom: 0.5rem;
+}
+
+/* --- Tooltip Styling --- */
+.tooltip {
+    position: absolute;
+    background-color: canvas;
+    border: 1px solid canvastext;
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    pointer-events: none; /* Prevents tooltip from blocking cursor */
+    z-index: 1000;
+    transition: opacity 0.1s ease;
+}
+
+.tooltip.hidden {
+    opacity: 0;
+}
+
+#commit-info {
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 1rem;
+}
+
+#commit-info dt {
+    font-weight: bold;
+    color: oklch(50% 10% 200); /* Muted text */
+}
+
+#commit-info dd {
+    margin: 0;
+}
+
+/* --- Brushing & Filtering --- */
+circle {
+    transition: opacity 0.2s, fill-opacity 0.2s;
+}
+
+/* Class applied via JS to dots outside the brush selection */
+circle.dimmed {
+    opacity: 0.1 !important;
+}
+
+/* D3 Brush default overlay fix for dark mode */
+.selection {
+    fill: var(--color-accent, #005a9c);
+    fill-opacity: 0.2;
+    stroke: var(--color-accent, #005a9c);
+}

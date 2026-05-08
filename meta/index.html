@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta - Codebase Analysis | Steven Xu</title>
+    <link rel="stylesheet" href="../style.css">
+    <script type="module" src="../global.js"></script>
+</head>
+<body>
+    <h1>Codebase Evolution</h1>
+    <p>An interactive visualization of my codebase's Git history. Drag a box over the points to filter the statistics.</p>
+
+    <div id="stats">
+        </div>
+
+    <div id="scatterplot-container">
+        <svg id="scatterplot" viewBox="0 0 800 500"></svg>
+        
+        <div id="commit-tooltip" class="tooltip hidden">
+            <dl id="commit-info">
+                </dl>
+        </div>
+    </div>
+
+    <script src="main.js" type="module" defer></script>
+</body>
+</html>
