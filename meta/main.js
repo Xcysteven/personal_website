@@ -7,13 +7,12 @@ const innerWidth = width - margin.left - margin.right;
 const innerHeight = height - margin.top - margin.bottom;
 
 async function createScatterplot() {
-    // 1. Load the Data
     const data = await d3.csv('loc.csv', (row) => ({
         ...row,
         datetime: new Date(row.datetime)
     }));
 
-    // 2. Group the data by Commit (combines individual lines into whole commits)
+    // Group the data by Commit AND save the raw lines array!
     const commits = d3.groups(data, (d) => d.commit).map(([commit, lines]) => {
         const first = lines[0];
         return {
@@ -22,11 +21,11 @@ async function createScatterplot() {
             author: first.author,
             date: first.date,
             time: first.time,
-            linesEdited: lines.length
+            linesEdited: lines.length,
+            lines: lines // <--- NEW: Saving the raw line data for language breakdown
         };
     });
 
-    // 3. Setup the SVG and Group for margins
     const svg = d3.select('#scatterplot')
         .attr('width', width)
         .attr('height', height);
@@ -34,7 +33,6 @@ async function createScatterplot() {
     const g = svg.append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // 4. Create Scales
     const xScale = d3.scaleTime()
         .domain(d3.extent(commits, d => d.datetime))
         .range([0, innerWidth])
@@ -46,9 +44,8 @@ async function createScatterplot() {
 
     const rScale = d3.scaleSqrt()
         .domain(d3.extent(commits, d => d.linesEdited))
-        .range([3, 20]); // Min radius 3, max radius 20
+        .range([3, 20]); 
 
-    // 5. Draw Axes & Gridlines
     const xAxis = d3.axisBottom(xScale);
     const yAxis = d3.axisLeft(yScale).tickFormat(d3.timeFormat("%H:%M"));
 
@@ -63,7 +60,6 @@ async function createScatterplot() {
             .attr('stroke-opacity', 0.1)
         );
 
-    // 6. Tooltip Logic
     const tooltip = d3.select('#commit-tooltip');
 
     function updateTooltipContent(commit) {
@@ -76,14 +72,13 @@ async function createScatterplot() {
         `);
     }
 
-    // 7. Draw the Dots
     const dots = g.selectAll('circle')
         .data(commits)
         .join('circle')
         .attr('cx', d => xScale(d.datetime))
         .attr('cy', d => yScale(new Date(2000, 0, 1, d.datetime.getHours(), d.datetime.getMinutes())))
         .attr('r', d => rScale(d.linesEdited))
-        .attr('fill', 'var(--color-accent, #005a9c)')
+        .attr('fill', 'var(--color-accent, #005a9c)') // Default blue
         .attr('fill-opacity', 0.6)
         .attr('stroke', 'canvas')
         .attr('stroke-width', 1)
@@ -91,13 +86,10 @@ async function createScatterplot() {
             d3.select(event.currentTarget).attr('fill-opacity', 1).attr('stroke', 'red');
             tooltip.classed('hidden', false);
             updateTooltipContent(d);
-            
-            // Fixed Double Offset: Using clientX and clientY
             tooltip.style('left', `${event.clientX + 15}px`)
                    .style('top', `${event.clientY + 15}px`);
         })
         .on('mousemove', (event) => {
-            // Fixed Double Offset: Using clientX and clientY
             tooltip.style('left', `${event.clientX + 15}px`)
                    .style('top', `${event.clientY + 15}px`);
         })
@@ -106,7 +98,6 @@ async function createScatterplot() {
             tooltip.classed('hidden', true);
         });
 
-    // 8. Brushing Logic
     const brush = d3.brush()
         .extent([[0, 0], [innerWidth, innerHeight]])
         .on('start brush end', brushed);
@@ -115,7 +106,6 @@ async function createScatterplot() {
         .attr('class', 'brush')
         .call(brush);
 
-    // Bring dots to front so hover still works through the brush
     g.selectAll('circle').raise();
 
     function brushed(event) {
@@ -130,19 +120,21 @@ async function createScatterplot() {
                 return cx >= x0 && cx <= x1 && cy >= y0 && cy <= y1;
             });
 
+            // Dim unselected, and add a 'selected' class to turn them red!
             dots.classed('dimmed', d => !selectedCommits.includes(d));
+            dots.classed('selected', d => selectedCommits.includes(d));
         } else {
             selectedCommits = commits;
             dots.classed('dimmed', false);
+            dots.classed('selected', false);
         }
 
         updateSummaryStats(selectedCommits);
+        displayCommitFiles(selectedCommits); // <--- NEW: Call the breakdown function
     }
 
-    // 9. Summary Statistics Logic
     function updateSummaryStats(activeCommits) {
         const statsDiv = d3.select('#stats');
-
         const totalCommits = activeCommits.length;
         const totalLines = d3.sum(activeCommits, d => d.linesEdited);
         const avgLines = totalCommits > 0 ? (totalLines / totalCommits).toFixed(1) : 0;
@@ -154,9 +146,39 @@ async function createScatterplot() {
         `);
     }
 
+    // NEW: Language Breakdown Function
+    function displayCommitFiles(activeCommits) {
+        // Flatten the array of lines from all selected commits
+        const lines = activeCommits.flatMap((d) => d.lines);
+        
+        // Group by file type
+        let breakdown = d3.rollups(
+            lines,
+            (v) => v.length,
+            (d) => d.type
+        );
+
+        // Update the text telling us how many commits are selected
+        d3.select('#selection-count').text(`${activeCommits.length} commits selected`);
+
+        // Clear out the old list and draw the new one
+        const container = d3.select('#language-breakdown');
+        container.selectAll('div').remove();
+
+        breakdown.forEach(([language, count]) => {
+            const proportion = count / lines.length;
+            const formatted = d3.format('.1~%')(proportion); // Formats as a percentage
+
+            container.append('div').html(`
+                <dt>${language.toUpperCase()}</dt>
+                <dd>${count} lines <span class="proportion">(${formatted})</span></dd>
+            `);
+        });
+    }
+
     // Initialize stats with all commits
     updateSummaryStats(commits);
+    displayCommitFiles(commits);
 }
 
-// Fire it up
 createScatterplot();

@@ -233,3 +233,51 @@ circle.dimmed {
     fill-opacity: 0.2;
     stroke: var(--color-accent, #005a9c);
 }
+
+/* --- Scatterplot Selected State (Red Dots) --- */
+circle {
+    transition: all 0.2s ease;
+}
+
+circle.selected {
+    fill: #ff6b6b !important; /* The red highlight color from the screenshot */
+    fill-opacity: 1;
+}
+
+/* --- Language Breakdown Grid --- */
+#selection-count {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+#language-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+    padding: 0;
+}
+
+#language-breakdown div {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+#language-breakdown dt {
+    font-size: 2rem;
+    font-weight: normal;
+    margin-bottom: 0.5rem;
+}
+
+#language-breakdown dd {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.proportion {
+    color: oklch(50% 10% 200); /* Muted gray text for the percentage */
+    display: block; /* Puts the percentage on its own line */
+}
