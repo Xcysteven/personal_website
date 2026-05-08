@@ -186,13 +186,13 @@ path {
 
 /* --- Tooltip Styling --- */
 .tooltip {
-    position: absolute;
+    position: fixed; 
     background-color: canvas;
     border: 1px solid canvastext;
     padding: 1rem;
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    pointer-events: none; /* Prevents tooltip from blocking cursor */
+    pointer-events: none; 
     z-index: 1000;
     transition: opacity 0.1s ease;
 }

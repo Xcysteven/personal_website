@@ -13,8 +13,7 @@ async function createScatterplot() {
         datetime: new Date(row.datetime)
     }));
 
-    // 2. Group the data by Commit
-    // loc.csv outputs one row per LINE of code. We need to group them into COMMITS.
+    // 2. Group the data by Commit (combines individual lines into whole commits)
     const commits = d3.groups(data, (d) => d.commit).map(([commit, lines]) => {
         const first = lines[0];
         return {
@@ -23,7 +22,7 @@ async function createScatterplot() {
             author: first.author,
             date: first.date,
             time: first.time,
-            linesEdited: lines.length // Count the rows to get lines edited per commit
+            linesEdited: lines.length
         };
     });
 
@@ -35,7 +34,7 @@ async function createScatterplot() {
     const g = svg.append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
 
-    // 4. Create Scales (Using 'commits' instead of raw 'data')
+    // 4. Create Scales
     const xScale = d3.scaleTime()
         .domain(d3.extent(commits, d => d.datetime))
         .range([0, innerWidth])
@@ -92,12 +91,15 @@ async function createScatterplot() {
             d3.select(event.currentTarget).attr('fill-opacity', 1).attr('stroke', 'red');
             tooltip.classed('hidden', false);
             updateTooltipContent(d);
-            tooltip.style('left', `${event.pageX + 15}px`)
-                   .style('top', `${event.pageY + 15}px`);
+            
+            // Fixed Double Offset: Using clientX and clientY
+            tooltip.style('left', `${event.clientX + 15}px`)
+                   .style('top', `${event.clientY + 15}px`);
         })
         .on('mousemove', (event) => {
-            tooltip.style('left', `${event.pageX + 15}px`)
-                   .style('top', `${event.pageY + 15}px`);
+            // Fixed Double Offset: Using clientX and clientY
+            tooltip.style('left', `${event.clientX + 15}px`)
+                   .style('top', `${event.clientY + 15}px`);
         })
         .on('mouseleave', (event) => {
             d3.select(event.currentTarget).attr('fill-opacity', 0.6).attr('stroke', 'canvas');
