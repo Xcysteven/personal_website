@@ -288,6 +288,7 @@ circle.selected {
     display: flex;
     gap: 2rem;
     margin-top: 2rem;
+    align-items: flex-start; /* CRUCIAL: Allows sticky to work inside flexbox */
 }
 
 #scrolly-1 > * {
@@ -318,9 +319,7 @@ circle.selected {
 #scatter-plot {
     position: sticky;
     top: 2rem;
-    left: 0;
-    bottom: auto;
-    height: auto;
+    height: 80vh; /* CRUCIAL: Must have a defined height smaller than the parent */
 }
 
 /* --- 2. CSS Entry Animations --- */
