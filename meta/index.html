@@ -13,17 +13,17 @@
 
     <div id="stats"></div>
 
+    <label id="commit-filter">
+        Show commits until:
+        <input type="range" id="commit-progress" min="0" max="100" value="100">
+        <time id="commit-time"></time>
+    </label>
+
     <div id="scrolly-1">
         <div id="scatter-story">
             </div>
 
         <div id="scatter-plot">
-            <label id="commit-filter">
-                Show commits until:
-                <input type="range" id="commit-progress" min="0" max="100" value="100">
-                <time id="commit-time"></time>
-            </label>
-
             <div id="scatterplot-container">
                 <svg id="scatterplot" viewBox="0 0 800 500"></svg>
                 

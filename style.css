@@ -331,12 +331,24 @@ circle.selected {
 }
 
 /* --- 2. Master Time Slider Interface --- */
+/* --- Master Time Slider Interface --- */
 #commit-filter {
     display: flex;
     align-items: baseline;
     gap: 1rem;
-    margin-bottom: 1rem;
     font-weight: bold;
+    
+    /* Make the slider sticky globally */
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Ensures it stays on top of the graphs and text */
+    
+    /* Styling to make it look like a clean header bar */
+    background: color-mix(in oklch, canvas, transparent 5%);
+    backdrop-filter: blur(10px); /* Optional: Adds a cool glass effect */
+    padding: 1rem 0;
+    border-bottom: 1px solid oklch(50% 10% 200 / 20%);
+    margin-bottom: 1rem;
 }
 
 #commit-time {
