@@ -337,6 +337,7 @@ circle.selected {
 
 #scatter-plot {
     flex: 0 0 auto;
+    padding-top: 1.75rem;
 }
 
 /* Keep file architecture visible together with scatterplot */
