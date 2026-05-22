@@ -281,3 +281,103 @@ circle.selected {
     color: oklch(50% 10% 200); /* Muted gray text for the percentage */
     display: block; /* Puts the percentage on its own line */
 }
+
+/* --- 1. Scrollytelling Layout --- */
+#scrolly-1 {
+    position: relative;
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+#scrolly-1 > * {
+    flex: 1; /* Make columns equal width */
+}
+
+#scatter-story {
+    position: relative;
+    padding-bottom: 10vh; /* Extra scroll space at the bottom */
+}
+
+/* The cards you scroll past */
+.step {
+    padding: 2rem;
+    margin-bottom: 60vh; /* Force lots of scrolling between steps */
+    background: color-mix(in oklch, canvas, canvastext 5%);
+    border: 1px solid oklch(50% 10% 200 / 20%);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: background-color 0.3s;
+}
+
+.step:last-child {
+    margin-bottom: 0;
+}
+
+/* The graph that stays pinned */
+#scatter-plot {
+    position: sticky;
+    top: 2rem;
+    left: 0;
+    bottom: auto;
+    height: auto;
+}
+
+/* --- 2. CSS Entry Animations --- */
+circle {
+    /* calc formula varies speed based on radius size */
+    transition: all 200ms, r calc(var(--r) * 10ms);
+}
+
+/* Forces new circles to start at 0 radius and grow */
+@starting-style {
+    circle {
+        r: 0;
+    }
+}
+
+/* --- 3. Unit Visualization (File Breakdowns) --- */
+#files {
+    display: grid;
+    grid-template-columns: 1fr 4fr; /* Filename gets 1/5 width, dots get 4/5 */
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+#files > div {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: subgrid; /* Aligns children to parent grid */
+    align-items: start;
+    border-bottom: 1px solid oklch(50% 10% 200 / 20%);
+    padding-bottom: 1rem;
+}
+
+#files dt {
+    grid-column: 1;
+    margin: 0;
+}
+
+#files dt small {
+    display: block;
+    color: oklch(50% 10% 200);
+    margin-top: 0.25rem;
+}
+
+#files dd {
+    grid-column: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    align-content: start;
+    gap: 0.15em; /* Tightly packs the dots */
+    margin: 0;
+}
+
+.loc {
+    display: flex;
+    width: 0.6em;
+    aspect-ratio: 1;
+    background: var(--color, steelblue); /* D3 injects the specific color */
+    border-radius: 50%;
+}
