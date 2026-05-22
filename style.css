@@ -284,32 +284,32 @@ circle.selected {
 
 /* === Lab 8: Animation & Scrollytelling === */
 
-/* --- 1. Scrollytelling Layout --- */
-#scrolly-1 {
+/* --- 1. Scrollytelling Component Layouts --- */
+#scrolly-1, #scrolly-2 {
     position: relative;
     display: flex;
     gap: 2rem;
-    margin-top: 2rem;
-    align-items: flex-start; /* CRUCIAL: Allows sticky to work inside flexbox */
+    margin-top: 3rem;
+    align-items: flex-start; /* Crucial containment constraint for position: sticky */
 }
 
-#scrolly-1 > * {
-    flex: 1; /* Make columns equal width */
+#scrolly-1 > *, #scrolly-2 > * {
+    flex: 1; /* Symmetric distribution */
 }
 
-#scatter-story {
+#scatter-story, #files-story {
     position: relative;
-    padding-bottom: 10vh; /* Extra scroll space at the bottom */
+    padding-bottom: 20vh; 
 }
 
-/* The cards you scroll past */
+/* Narrative step container structures */
 .step {
     padding: 2rem;
-    margin-bottom: 60vh; /* Force lots of scrolling between steps */
+    margin-bottom: 65vh; /* Drives deliberate scroll tracking space */
     background: color-mix(in oklch, canvas, canvastext 5%);
     border: 1px solid oklch(50% 10% 200 / 20%);
     border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     transition: background-color 0.3s;
 }
 
@@ -317,14 +317,20 @@ circle.selected {
     margin-bottom: 0;
 }
 
-/* The graph that stays pinned */
-#scatter-plot {
+/* Sticky Right-Hand Frames */
+#scatter-plot, #files-plot {
     position: sticky;
     top: 2rem;
-    height: 80vh; /* CRUCIAL: Must have a defined height smaller than the parent */
+    height: 80vh; 
 }
 
-/* --- 2. Time Slider --- */
+/* Prevent layout breaking if file roster scales significantly */
+#files-plot {
+    overflow-y: auto;
+    padding-right: 1rem;
+}
+
+/* --- 2. Master Time Slider Interface --- */
 #commit-filter {
     display: flex;
     align-items: baseline;
@@ -334,38 +340,37 @@ circle.selected {
 }
 
 #commit-time {
-    margin-left: auto; /* Pushes the time to the far right */
+    margin-left: auto; 
     font-weight: normal;
     color: var(--color-accent, #005a9c);
 }
 
-/* --- 3. CSS Entry Animations --- */
+/* --- 3. Vector Animations --- */
 circle {
-    /* calc formula varies speed based on radius size */
-    transition: all 200ms, r calc(var(--r) * 10ms);
+    transition: all 220ms, r calc(var(--r) * 8ms);
 }
 
-/* Forces new circles to start at 0 radius and grow */
 @starting-style {
     circle {
         r: 0;
     }
 }
 
-/* --- 4. Unit Visualization (File Breakdowns) --- */
+/* --- 4. Unit Visualizations --- */
 #files {
     display: grid;
-    grid-template-columns: 1fr 4fr; /* Filename gets 1/5 width, dots get 4/5 */
+    grid-template-columns: 1.5fr 3.5fr; 
     gap: 1.5rem;
-    margin-top: 2rem;
+    margin: 0;
+    padding: 0;
 }
 
 #files > div {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: subgrid; /* Aligns children to parent grid */
+    grid-template-columns: subgrid; 
     align-items: start;
-    border-bottom: 1px solid oklch(50% 10% 200 / 20%);
+    border-bottom: 1px solid oklch(50% 10% 200 / 15%);
     padding-bottom: 1rem;
 }
 
@@ -377,7 +382,7 @@ circle {
 #files dt small {
     display: block;
     color: oklch(50% 10% 200);
-    margin-top: 0.25rem;
+    margin-top: 0.35rem;
 }
 
 #files dd {
@@ -386,14 +391,15 @@ circle {
     flex-wrap: wrap;
     align-items: start;
     align-content: start;
-    gap: 0.15em; /* Tightly packs the dots */
+    gap: 0.18em; 
     margin: 0;
 }
 
 .loc {
     display: flex;
-    width: 0.6em;
+    width: 0.55em;
     aspect-ratio: 1;
-    background: var(--color, steelblue); /* D3 injects the specific color */
+    background: var(--color, steelblue); 
     border-radius: 50%;
+    transition: all 150ms ease;
 }

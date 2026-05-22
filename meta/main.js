@@ -7,19 +7,18 @@ const margin = { top: 20, right: 30, bottom: 40, left: 50 };
 const innerWidth = width - margin.left - margin.right;
 const innerHeight = height - margin.top - margin.bottom;
 
-// Define global variables
+// Global State
 let commits = [];
 let xScale, yScale, rScale, xAxis, yAxis;
 let svg, dotsGroup;
 let colors = d3.scaleOrdinal(d3.schemeTableau10); 
-let timeScale; // Maps dates to 0-100 for the slider
+let timeScale; 
 
-// Slider Elements
 const timeSlider = document.getElementById('commit-progress');
 const selectedTime = document.getElementById('commit-time');
 
 async function initVisualizations() {
-    // 1. Load the Data
+    // 1. Load Data
     const data = await d3.csv('loc.csv', (row) => ({
         ...row,
         datetime: new Date(row.datetime)
@@ -39,12 +38,12 @@ async function initVisualizations() {
         };
     }).sort((a, b) => a.datetime - b.datetime);
 
-    // 3. Setup Time Scale for the Slider
+    // 3. Time Scale for Slider Linkage
     timeScale = d3.scaleTime()
         .domain(d3.extent(commits, d => d.datetime))
         .range([0, 100]);
 
-    // 4. Setup the SVG
+    // 4. Setup Scatterplot SVG
     svg = d3.select('#scatterplot')
         .attr('width', width)
         .attr('height', height);
@@ -54,7 +53,7 @@ async function initVisualizations() {
     
     dotsGroup = g.append('g').attr('class', 'dots');
 
-    // 5. Create Map Scales
+    // 5. Scatterplot Scales
     xScale = d3.scaleTime()
         .domain(d3.extent(commits, d => d.datetime))
         .range([0, innerWidth])
@@ -85,7 +84,7 @@ async function initVisualizations() {
             .attr('stroke-opacity', 0.1)
         );
 
-    // 7. Generate Narrative Text
+    // 7. Inject Story Steps for Section 1 (Scatterplot)
     d3.select('#scatter-story')
         .selectAll('.step')
         .data(commits)
@@ -93,16 +92,27 @@ async function initVisualizations() {
         .attr('class', 'step')
         .html((d, i) => `
             <h3>${d.datetime.toLocaleString('en', { dateStyle: 'full', timeStyle: 'short' })}</h3>
-            <p>I made ${i > 0 ? 'another glorious commit' : 'my first commit, and it was glorious'}.</p>
-            <p>I edited <strong>${d.linesEdited}</strong> lines across <strong>${d3.rollups(d.lines, D => D.length, d => d.file).length}</strong> files.</p>
+            <p>I pushed ${i > 0 ? 'another patch to the repository' : 'the foundational core of this website'}.</p>
+            <p>This update introduced <strong>${d.linesEdited}</strong> modifications across <strong>${d3.rollups(d.lines, D => D.length, d => d.file).length}</strong> structural files.</p>
         `);
 
-    // 8. Setup Slider Listener
+    // 8. Inject Story Steps for Section 2 (File Architecture Units)
+    d3.select('#files-story')
+        .selectAll('.step')
+        .data(commits)
+        .join('div')
+        .attr('class', 'step')
+        .html((d) => `
+            <h3>Structural Growth</h3>
+            <p>As of ${d.datetime.toLocaleDateString()}, the codebase expanded. Let's look at the density shifting inside the directory layout during this development phase.</p>
+        `);
+
+    // 9. Setup Slider Listener
     timeSlider.addEventListener('input', updateTimeDisplay);
 
-    // 9. Setup Scrollama
-    const scroller = scrollama();
-    scroller
+    // 10. Scrollama Scroller 1: Scatterplot
+    const scroller1 = scrollama();
+    scroller1
         .setup({
             container: '#scrolly-1',
             step: '#scrolly-1 .step',
@@ -110,23 +120,36 @@ async function initVisualizations() {
         })
         .onStepEnter((response) => {
             const currentCommitDate = response.element.__data__.datetime;
-            
-            // SYNC THE SLIDER TO THE SCROLL
             timeSlider.value = timeScale(currentCommitDate);
             selectedTime.textContent = currentCommitDate.toLocaleString('en', { dateStyle: "long", timeStyle: "short" });
             
-            // Update visuals
             const filteredCommits = commits.filter(d => d.datetime <= currentCommitDate);
-            updateVisuals(filteredCommits);
+            updateScatterPlot(filteredCommits);
+            updateSummaryStats(filteredCommits);
         });
 
-    // Initialize blank
-    updateVisuals([]);
+    // 11. Scrollama Scroller 2: File Architecture Unit Blocks
+    const scroller2 = scrollama();
+    scroller2
+        .setup({
+            container: '#scrolly-2',
+            step: '#scrolly-2 .step',
+            offset: 0.5,
+        })
+        .onStepEnter((response) => {
+            const currentCommitDate = response.element.__data__.datetime;
+            const filteredCommits = commits.filter(d => d.datetime <= currentCommitDate);
+            updateFileDisplay(filteredCommits);
+        });
+
+    // Initialize display values
+    updateScatterPlot([]);
+    updateSummaryStats([]);
+    updateFileDisplay([]);
 }
 
-// === INTERACTION & UPDATE FUNCTIONS ===
+// === RESPONSE LAYER UPDATES ===
 
-// Handles manual slider scrubbing
 function updateTimeDisplay() {
     const commitProgress = Number(timeSlider.value);
     const commitMaxTime = timeScale.invert(commitProgress);
@@ -134,20 +157,15 @@ function updateTimeDisplay() {
     selectedTime.textContent = commitMaxTime.toLocaleString('en', { dateStyle: "long", timeStyle: "short" });
 
     const filteredCommits = commits.filter(d => d.datetime <= commitMaxTime);
-    updateVisuals(filteredCommits);
-}
-
-// Helper to update all 3 visual sections at once
-function updateVisuals(filteredCommits) {
     updateScatterPlot(filteredCommits);
     updateSummaryStats(filteredCommits);
-    updateFileDisplay(filteredCommits);
+    updateFileDisplay(filteredCommits); // Slider coordinates updates globally across sections
 }
 
 function updateScatterPlot(filteredCommits) {
     const tooltip = d3.select('#commit-tooltip');
 
-    const dots = dotsGroup.selectAll('circle')
+    dotsGroup.selectAll('circle')
         .data(filteredCommits, d => d.id)
         .join('circle')
         .attr('cx', d => xScale(d.datetime))

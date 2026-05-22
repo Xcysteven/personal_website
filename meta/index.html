@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1>Codebase Evolution</h1>
-    <p>Scroll down to see the story of how my website's code was built, commit by commit. Alternatively, use the slider to scrub through the timeline.</p>
+    <p>Scroll down to explore the interactive narrative of how this website's codebase was engineered.</p>
 
     <div id="stats"></div>
 
@@ -34,9 +34,16 @@
         </div>
     </div>
 
-    <h2 style="margin-top: 4rem;">File Architecture</h2>
-    <p>A breakdown of the codebase by file. Each dot represents a single line of code.</p>
-    <dl id="files"></dl>
+    <div id="scrolly-2">
+        <div id="files-story">
+            </div>
+
+        <div id="files-plot">
+            <h2>File Architecture</h2>
+            <p>Tracking code volume across individual files. Each dot represents a single line of code, colored by technology.</p>
+            <dl id="files"></dl>
+        </div>
+    </div>
 
     <script src="main.js" type="module" defer></script>
 </body>
