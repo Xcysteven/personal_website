@@ -13,6 +13,9 @@ let xScale, yScale, rScale, xAxis, yAxis;
 let svg, dotsGroup;
 let colors = d3.scaleOrdinal(d3.schemeTableau10); 
 let timeScale; 
+let commitProgress = 100;
+let commitMaxTime;
+let filteredCommits = [];
 
 const timeSlider = document.getElementById('commit-progress');
 const selectedTime = document.getElementById('commit-time');
@@ -42,6 +45,7 @@ async function initVisualizations() {
     timeScale = d3.scaleTime()
         .domain(d3.extent(commits, d => d.datetime))
         .range([0, 100]);
+    commitMaxTime = timeScale.invert(commitProgress);
 
     // 4. Setup Scatterplot SVG
     svg = d3.select('#scatterplot')
@@ -108,7 +112,8 @@ async function initVisualizations() {
         `);
 
     // 9. Setup Slider Listener
-    timeSlider.addEventListener('input', updateTimeDisplay);
+    timeSlider.value = commitProgress;
+    timeSlider.addEventListener('input', onTimeSliderChange);
 
     // 10. Scrollama Scroller 1: Scatterplot
     const scroller1 = scrollama();
@@ -120,12 +125,9 @@ async function initVisualizations() {
         })
         .onStepEnter((response) => {
             const currentCommitDate = response.element.__data__.datetime;
-            timeSlider.value = timeScale(currentCommitDate);
-            selectedTime.textContent = currentCommitDate.toLocaleString('en', { dateStyle: "long", timeStyle: "short" });
-            
-            const filteredCommits = commits.filter(d => d.datetime <= currentCommitDate);
-            updateScatterPlot(filteredCommits);
-            updateSummaryStats(filteredCommits);
+            commitProgress = timeScale(currentCommitDate);
+            timeSlider.value = commitProgress;
+            onTimeSliderChange();
         });
 
     // 11. Scrollama Scroller 2: File Architecture Unit Blocks
@@ -142,21 +144,19 @@ async function initVisualizations() {
             updateFileDisplay(filteredCommits);
         });
 
-    // Initialize display values
-    updateScatterPlot([]);
-    updateSummaryStats([]);
-    updateFileDisplay([]);
+    // Initialize display values from slider state
+    onTimeSliderChange();
 }
 
 // === RESPONSE LAYER UPDATES ===
 
-function updateTimeDisplay() {
-    const commitProgress = Number(timeSlider.value);
-    const commitMaxTime = timeScale.invert(commitProgress);
+function onTimeSliderChange() {
+    commitProgress = Number(timeSlider.value);
+    commitMaxTime = timeScale.invert(commitProgress);
     
     selectedTime.textContent = commitMaxTime.toLocaleString('en', { dateStyle: "long", timeStyle: "short" });
 
-    const filteredCommits = commits.filter(d => d.datetime <= commitMaxTime);
+    filteredCommits = commits.filter(d => d.datetime <= commitMaxTime);
     updateScatterPlot(filteredCommits);
     updateSummaryStats(filteredCommits);
     updateFileDisplay(filteredCommits); // Slider coordinates updates globally across sections
@@ -164,9 +164,17 @@ function updateTimeDisplay() {
 
 function updateScatterPlot(filteredCommits) {
     const tooltip = d3.select('#commit-tooltip');
+    const domainCommits = filteredCommits.length > 0 ? filteredCommits : commits;
+
+    xScale.domain(d3.extent(domainCommits, d => d.datetime)).nice();
+    const xAxisGroup = svg.select('g.x-axis');
+    xAxisGroup.selectAll('*').remove();
+    xAxisGroup.call(xAxis);
+
+    const sortedCommits = d3.sort(filteredCommits, d => -d.linesEdited);
 
     dotsGroup.selectAll('circle')
-        .data(filteredCommits, d => d.id)
+        .data(sortedCommits, d => d.id)
         .join('circle')
         .attr('cx', d => xScale(d.datetime))
         .attr('cy', d => yScale(new Date(2000, 0, 1, d.datetime.getHours(), d.datetime.getMinutes())))
