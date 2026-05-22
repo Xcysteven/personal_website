@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1>Codebase Evolution</h1>
-    <p>Scroll down to see the story of how my website's code was built, commit by commit.</p>
+    <p>Scroll down to see the story of how my website's code was built, commit by commit. Alternatively, use the slider to scrub through the timeline.</p>
 
     <div id="stats"></div>
 
@@ -18,6 +18,12 @@
             </div>
 
         <div id="scatter-plot">
+            <label id="commit-filter">
+                Show commits until:
+                <input type="range" id="commit-progress" min="0" max="100" value="100">
+                <time id="commit-time"></time>
+            </label>
+
             <div id="scatterplot-container">
                 <svg id="scatterplot" viewBox="0 0 800 500"></svg>
                 

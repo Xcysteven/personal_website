@@ -7,11 +7,16 @@ const margin = { top: 20, right: 30, bottom: 40, left: 50 };
 const innerWidth = width - margin.left - margin.right;
 const innerHeight = height - margin.top - margin.bottom;
 
-// Define global variables so our update functions can access them
+// Define global variables
 let commits = [];
 let xScale, yScale, rScale, xAxis, yAxis;
 let svg, dotsGroup;
-let colors = d3.scaleOrdinal(d3.schemeTableau10); // Color scale for file types
+let colors = d3.scaleOrdinal(d3.schemeTableau10); 
+let timeScale; // Maps dates to 0-100 for the slider
+
+// Slider Elements
+const timeSlider = document.getElementById('commit-progress');
+const selectedTime = document.getElementById('commit-time');
 
 async function initVisualizations() {
     // 1. Load the Data
@@ -20,7 +25,7 @@ async function initVisualizations() {
         datetime: new Date(row.datetime)
     }));
 
-    // 2. Group the data by Commit and sort chronologically for scrollytelling
+    // 2. Group and sort commits chronologically
     commits = d3.groups(data, (d) => d.commit).map(([commit, lines]) => {
         const first = lines[0];
         return {
@@ -34,7 +39,12 @@ async function initVisualizations() {
         };
     }).sort((a, b) => a.datetime - b.datetime);
 
-    // 3. Setup the SVG
+    // 3. Setup Time Scale for the Slider
+    timeScale = d3.scaleTime()
+        .domain(d3.extent(commits, d => d.datetime))
+        .range([0, 100]);
+
+    // 4. Setup the SVG
     svg = d3.select('#scatterplot')
         .attr('width', width)
         .attr('height', height);
@@ -42,10 +52,9 @@ async function initVisualizations() {
     const g = svg.append('g')
         .attr('transform', `translate(${margin.left},${margin.top})`);
     
-    // Group specifically for dots so they stay behind axes/brush if needed
     dotsGroup = g.append('g').attr('class', 'dots');
 
-    // 4. Create Scales
+    // 5. Create Map Scales
     xScale = d3.scaleTime()
         .domain(d3.extent(commits, d => d.datetime))
         .range([0, innerWidth])
@@ -59,12 +68,12 @@ async function initVisualizations() {
         .domain(d3.extent(commits, d => d.linesEdited))
         .range([3, 30]);
 
-    // 5. Draw Axes
+    // 6. Draw Axes
     xAxis = d3.axisBottom(xScale);
     yAxis = d3.axisLeft(yScale).tickFormat(d3.timeFormat("%H:%M"));
 
     g.append('g')
-        .attr('class', 'x-axis') // Class added for dynamic updating
+        .attr('class', 'x-axis') 
         .attr('transform', `translate(0,${innerHeight})`)
         .call(xAxis);
 
@@ -76,7 +85,7 @@ async function initVisualizations() {
             .attr('stroke-opacity', 0.1)
         );
 
-    // 6. Generate the Narrative Text (Scrollytelling Steps)
+    // 7. Generate Narrative Text
     d3.select('#scatter-story')
         .selectAll('.step')
         .data(commits)
@@ -88,45 +97,61 @@ async function initVisualizations() {
             <p>I edited <strong>${d.linesEdited}</strong> lines across <strong>${d3.rollups(d.lines, D => D.length, d => d.file).length}</strong> files.</p>
         `);
 
-    // 7. Setup Scrollama
+    // 8. Setup Slider Listener
+    timeSlider.addEventListener('input', updateTimeDisplay);
+
+    // 9. Setup Scrollama
     const scroller = scrollama();
     scroller
         .setup({
             container: '#scrolly-1',
             step: '#scrolly-1 .step',
-            offset: 0.5, // Triggers when the step hits the middle of the screen
+            offset: 0.5, 
         })
         .onStepEnter((response) => {
-            // Get the datetime from the step that just scrolled into view
             const currentCommitDate = response.element.__data__.datetime;
             
-            // Filter commits up to this point in time
-            const filteredCommits = commits.filter(d => d.datetime <= currentCommitDate);
+            // SYNC THE SLIDER TO THE SCROLL
+            timeSlider.value = timeScale(currentCommitDate);
+            selectedTime.textContent = currentCommitDate.toLocaleString('en', { dateStyle: "long", timeStyle: "short" });
             
-            // Update all visual components!
-            updateScatterPlot(filteredCommits);
-            updateSummaryStats(filteredCommits);
-            updateFileDisplay(filteredCommits);
+            // Update visuals
+            const filteredCommits = commits.filter(d => d.datetime <= currentCommitDate);
+            updateVisuals(filteredCommits);
         });
 
-    // Initialize the visuals with an empty array or the first commit so it starts blank
-    updateScatterPlot([]);
-    updateSummaryStats([]);
-    updateFileDisplay([]);
+    // Initialize blank
+    updateVisuals([]);
 }
 
-// === UPDATE FUNCTIONS ===
+// === INTERACTION & UPDATE FUNCTIONS ===
+
+// Handles manual slider scrubbing
+function updateTimeDisplay() {
+    const commitProgress = Number(timeSlider.value);
+    const commitMaxTime = timeScale.invert(commitProgress);
+    
+    selectedTime.textContent = commitMaxTime.toLocaleString('en', { dateStyle: "long", timeStyle: "short" });
+
+    const filteredCommits = commits.filter(d => d.datetime <= commitMaxTime);
+    updateVisuals(filteredCommits);
+}
+
+// Helper to update all 3 visual sections at once
+function updateVisuals(filteredCommits) {
+    updateScatterPlot(filteredCommits);
+    updateSummaryStats(filteredCommits);
+    updateFileDisplay(filteredCommits);
+}
 
 function updateScatterPlot(filteredCommits) {
     const tooltip = d3.select('#commit-tooltip');
 
-    // D3 Data Join using the commit ID as the unique key for stable animations!
     const dots = dotsGroup.selectAll('circle')
         .data(filteredCommits, d => d.id)
         .join('circle')
         .attr('cx', d => xScale(d.datetime))
         .attr('cy', d => yScale(new Date(2000, 0, 1, d.datetime.getHours(), d.datetime.getMinutes())))
-        // We use CSS variables to power the radius transition
         .style('--r', d => rScale(d.linesEdited))
         .attr('r', d => rScale(d.linesEdited)) 
         .attr('fill', 'var(--color-accent, #005a9c)')
@@ -168,13 +193,11 @@ function updateSummaryStats(filteredCommits) {
 }
 
 function updateFileDisplay(filteredCommits) {
-    // Flatten lines and group by file
     let lines = filteredCommits.flatMap((d) => d.lines);
     let files = d3.groups(lines, (d) => d.file).map(([name, lines]) => {
         return { name, lines };
-    }).sort((a, b) => b.lines.length - a.lines.length); // Sort descending by size
+    }).sort((a, b) => b.lines.length - a.lines.length); 
 
-    // D3 Join for the Dictionary List
     let filesContainer = d3.select('#files')
         .selectAll('div')
         .data(files, d => d.name)
@@ -182,24 +205,20 @@ function updateFileDisplay(filteredCommits) {
             enter => enter.append('div').call(div => {
                 const dt = div.append('dt');
                 dt.append('code');
-                dt.append('small'); // For the line count
+                dt.append('small'); 
                 div.append('dd');
             })
         );
 
-    // Update Text
     filesContainer.select('dt > code').text(d => d.name);
     filesContainer.select('dt > small').text(d => `${d.lines.length} lines`);
 
-    // Draw the unit visualization dots (one for each line)
     filesContainer.select('dd')
         .selectAll('div')
         .data(d => d.lines)
         .join('div')
         .attr('class', 'loc')
-        // Color the dot based on its file extension/technology
         .attr('style', d => `--color: ${colors(d.type)}`);
 }
 
-// Fire it up
 initVisualizations();

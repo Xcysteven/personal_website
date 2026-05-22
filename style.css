@@ -282,6 +282,8 @@ circle.selected {
     display: block; /* Puts the percentage on its own line */
 }
 
+/* === Lab 8: Animation & Scrollytelling === */
+
 /* --- 1. Scrollytelling Layout --- */
 #scrolly-1 {
     position: relative;
@@ -322,7 +324,22 @@ circle.selected {
     height: 80vh; /* CRUCIAL: Must have a defined height smaller than the parent */
 }
 
-/* --- 2. CSS Entry Animations --- */
+/* --- 2. Time Slider --- */
+#commit-filter {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+#commit-time {
+    margin-left: auto; /* Pushes the time to the far right */
+    font-weight: normal;
+    color: var(--color-accent, #005a9c);
+}
+
+/* --- 3. CSS Entry Animations --- */
 circle {
     /* calc formula varies speed based on radius size */
     transition: all 200ms, r calc(var(--r) * 10ms);
@@ -335,7 +352,7 @@ circle {
     }
 }
 
-/* --- 3. Unit Visualization (File Breakdowns) --- */
+/* --- 4. Unit Visualization (File Breakdowns) --- */
 #files {
     display: grid;
     grid-template-columns: 1fr 4fr; /* Filename gets 1/5 width, dots get 4/5 */
