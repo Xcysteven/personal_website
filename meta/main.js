@@ -100,22 +100,11 @@ async function initVisualizations() {
             <p>This update introduced <strong>${d.linesEdited}</strong> modifications across <strong>${d3.rollups(d.lines, D => D.length, d => d.file).length}</strong> structural files.</p>
         `);
 
-    // 8. Inject Story Steps for Section 2 (File Architecture Units)
-    d3.select('#files-story')
-        .selectAll('.step')
-        .data(commits)
-        .join('div')
-        .attr('class', 'step')
-        .html((d) => `
-            <h3>Structural Growth</h3>
-            <p>As of ${d.datetime.toLocaleDateString()}, the codebase expanded. Let's look at the density shifting inside the directory layout during this development phase.</p>
-        `);
-
-    // 9. Setup Slider Listener
+    // 8. Setup Slider Listener
     timeSlider.value = commitProgress;
     timeSlider.addEventListener('input', onTimeSliderChange);
 
-    // 10. Scrollama Scroller 1: Scatterplot
+    // 9. Scrollama Scroller: both visualizations update from the same commit steps
     const scroller1 = scrollama();
     scroller1
         .setup({
@@ -128,20 +117,6 @@ async function initVisualizations() {
             commitProgress = timeScale(currentCommitDate);
             timeSlider.value = commitProgress;
             onTimeSliderChange();
-        });
-
-    // 11. Scrollama Scroller 2: File Architecture Unit Blocks
-    const scroller2 = scrollama();
-    scroller2
-        .setup({
-            container: '#scrolly-2',
-            step: '#scrolly-2 .step',
-            offset: 0.5,
-        })
-        .onStepEnter((response) => {
-            const currentCommitDate = response.element.__data__.datetime;
-            const filteredCommits = commits.filter(d => d.datetime <= currentCommitDate);
-            updateFileDisplay(filteredCommits);
         });
 
     // Initialize display values from slider state
