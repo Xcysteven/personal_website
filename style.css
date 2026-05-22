@@ -320,8 +320,8 @@ circle.selected {
 /* Sticky shared frame for both visualizations */
 #visuals-panel {
     position: sticky;
-    top: 5rem;
-    max-height: calc(100vh - 6rem);
+    top: 6.5rem;
+    max-height: calc(100vh - 7.5rem);
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -366,8 +366,9 @@ circle.selected {
 /* --- 2. Master Time Slider Interface --- */
 /* --- Master Time Slider Interface --- */
 #commit-filter {
-    display: flex;
-    align-items: baseline;
+    display: grid;
+    grid-template-columns: max-content 1fr max-content;
+    align-items: center;
     gap: 1rem;
     font-weight: bold;
     
@@ -384,8 +385,19 @@ circle.selected {
     margin-bottom: 1rem;
 }
 
+#commit-filter-label {
+    white-space: nowrap;
+}
+
+#commit-progress {
+    width: 100%;
+    min-width: 0;
+}
+
 #commit-time {
-    margin-left: auto; 
+    margin-left: 0;
+    white-space: nowrap;
+    text-align: right;
     font-weight: normal;
     color: var(--color-accent, #005a9c);
 }
