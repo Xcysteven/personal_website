@@ -12,7 +12,7 @@ let commits = [];
 let xScale, yScale, rScale, xAxis, yAxis;
 let svg, dotsGroup;
 let colors = d3.scaleOrdinal(d3.schemeTableau10); 
-let timeScale; 
+let commitIndexScale;
 let commitProgress = 100;
 let commitMaxTime;
 let filteredCommits = [];
@@ -41,11 +41,11 @@ async function initVisualizations() {
         };
     }).sort((a, b) => a.datetime - b.datetime);
 
-    // 3. Time Scale for Slider Linkage
-    timeScale = d3.scaleTime()
-        .domain(d3.extent(commits, d => d.datetime))
-        .range([0, 100]);
-    commitMaxTime = timeScale.invert(commitProgress);
+    // 3. Slider Scale for Commit Index Linkage
+    commitIndexScale = d3
+        .scaleLinear()
+        .domain([0, 100])
+        .range([0, Math.max(0, commits.length - 1)]);
 
     // 4. Setup Scatterplot SVG
     svg = d3.select('#scatterplot')
@@ -113,25 +113,36 @@ async function initVisualizations() {
             offset: 0.5, 
         })
         .onStepEnter((response) => {
-            const currentCommitDate = response.element.__data__.datetime;
-            commitProgress = timeScale(currentCommitDate);
-            timeSlider.value = commitProgress;
-            onTimeSliderChange();
+            updateVisualsForCommitIndex(response.index, true);
         });
 
-    // Initialize display values from slider state
-    onTimeSliderChange();
+    // Initialize to the latest commit
+    updateVisualsForCommitIndex(commits.length - 1, true);
 }
 
 // === RESPONSE LAYER UPDATES ===
 
 function onTimeSliderChange() {
-    commitProgress = Number(timeSlider.value);
-    commitMaxTime = timeScale.invert(commitProgress);
-    
-    selectedTime.textContent = commitMaxTime.toLocaleString('en', { dateStyle: "long", timeStyle: "short" });
+    const sliderValue = Number(timeSlider.value);
+    const commitIndex = commitIndexScale(sliderValue);
+    updateVisualsForCommitIndex(commitIndex, true);
+}
 
-    filteredCommits = commits.filter(d => d.datetime <= commitMaxTime);
+function updateVisualsForCommitIndex(rawIndex, syncSlider = false) {
+    if (!commits.length) {
+        return;
+    }
+
+    const clampedIndex = Math.max(0, Math.min(commits.length - 1, Math.round(rawIndex)));
+    commitMaxTime = commits[clampedIndex].datetime;
+    filteredCommits = commits.slice(0, clampedIndex + 1);
+
+    commitProgress = commits.length === 1 ? 100 : (clampedIndex / (commits.length - 1)) * 100;
+    if (syncSlider) {
+        timeSlider.value = String(commitProgress);
+    }
+
+    selectedTime.textContent = commitMaxTime.toLocaleString('en', { dateStyle: "long", timeStyle: "short" });
     updateScatterPlot(filteredCommits);
     updateSummaryStats(filteredCommits);
     updateFileDisplay(filteredCommits); // Slider coordinates updates globally across sections
