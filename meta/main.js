@@ -3,7 +3,7 @@ import scrollama from 'https://cdn.jsdelivr.net/npm/scrollama@3.2.0/+esm';
 
 const width = 800;
 const height = 500;
-const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+const margin = { top: 36, right: 30, bottom: 40, left: 50 };
 const innerWidth = width - margin.left - margin.right;
 const innerHeight = height - margin.top - margin.bottom;
 
